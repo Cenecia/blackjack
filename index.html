@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Hello Bulma!</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <script src="https://kit.fontawesome.com/38e9318183.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/vue@3"></script>
+    <link rel="stylesheet" href="./css/style.css">
+  </head>
+  <body>
+    <script src="https://unpkg.com/vue@3"></script>
+
+    <div id="app" style="height:max-content;">
+      <div class="container" style="background-color: #000; padding: 1em;">
+        <h1 class="title has-text-grey-lighter">
+          Blackjack Cheat Sheet
+        </h1>
+        <div class="has-background-grey-dark" style="height: 100%; border-radius: 0.5em;">
+          <section class="section">
+            <div class="columns">
+              <div class="column">
+                <div class="columns">
+                  <div class="column has-background-primary-dark pickerBarLeft">
+                    <p class="has-text-white is-size-4">Your Cards</p>
+                    <div class="select is-rounded">
+                      <select v-model="player">
+                        <option value="">--You--</option>
+                        <option value="AA">A A</option>
+                        <option value="1010">10 10</option>
+                        <option value="99">9 9</option>
+                        <option value="88">8 8</option>
+                        <option value="77">7 7</option>
+                        <option value="66">6 6</option>
+                        <option value="55">5 5</option>
+                        <option value="44">4 4</option>
+                        <option value="33">3 3</option>
+                        <option value="22">2 2</option>
+                        <option value="17">17+</option>
+                        <option value="16">16</option>
+                        <option value="15">15</option>
+                        <option value="14">14</option>
+                        <option value="13">13</option>
+                        <option value="12">12</option>
+                        <option value="11">11</option>
+                        <option value="10">10</option>
+                        <option value="9">9</option>
+                        <option value="8">8-</option>
+                        <option value="A9">A-9</option>
+                        <option value="A8">A-8</option>
+                        <option value="A7">A-7</option>
+                        <option value="A6">A-6</option>
+                        <option value="A5">A-5</option>
+                        <option value="A4">A-4</option>
+                        <option value="A3">A-3</option>
+                        <option value="A2">A-2</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="column has-background-primary">
+                    <p class="has-text-white is-size-4">Dealer Shows</p>
+                    <div class="select is-rounded">
+                      <select v-model="dealer">
+                        <option value="">--Dealer--</option>
+                        <option value="A">A</option>
+                        <option value="10">10</option>
+                        <option value="9">9</option>
+                        <option value="8">8</option>
+                        <option value="7">7</option>
+                        <option value="6">6</option>
+                        <option value="5">5</option>
+                        <option value="4">4</option>
+                        <option value="3">3</option>
+                        <option value="2">2</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="column has-background-primary-light has-text-black is-size-4 pickerBarRight">
+                {{solutionMessage}}
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script>
+    Vue.createApp({
+      data() {
+        return {
+          player: '',
+          dealer: ''
+        }
+      },
+      computed: {
+        // a computed getter
+        solutionMessage() {
+          let response = ['Pick Something!']
+          if(this.player && this.dealer){
+            const decision = this.getSolution()
+            switch(decision){
+              case 'hit':
+                response = this.generateHit()
+                break
+              case 'stand':
+                response = this.generateStand()
+                break
+              case 'split':
+                response = this.generateSplit()
+                break
+              case 'double':
+                response = this.generateDouble()
+                break
+              case 'hit/surrender':
+                response = this.generateSurrender()
+                break
+              default:
+                break
+            }
+          }
+          return response[Math.floor(Math.random() * response.length)]
+        }
+      },
+      methods: {
+        getSolution() {
+          switch(this.player){
+            case 'AA':
+            case '88':
+              return 'split'
+              break
+            case '1010':
+            case '17':
+              return 'stand'
+              break
+            case '99':
+              switch(this.dealer){
+                case 'A':
+                case '10':
+                case '7':
+                  return 'stand'
+                default:
+                  return 'split'
+              }
+              break
+            case '77':
+              switch(this.dealer){
+                case 'A':
+                case '10':
+                case '9':
+                case '8':
+                  return 'hit'
+                default:
+                  return 'split'
+              }
+              break
+            case '66':
+            case '8':
+              return 'hit'
+              break
+            case '55':
+              switch(this.dealer){
+                case 'A':
+                case '10':
+                  return 'hit'
+                default:
+                  return 'double'
+              }
+              break
+            case '44':
+              switch(this.dealer){
+                case '6':
+                case '5':
+                  return 'split'
+                default:
+                  return 'hit'
+              }
+              break
+            case '33':
+            case '22':
+              switch(this.dealer){
+                case 'A':
+                case '10':
+                case '9':
+                case '8':
+                  return 'hit'
+                default:
+                  return 'split'
+              }
+              break
+            case '16':
+              switch(this.dealer){
+                case 'A':
+                case '10':
+                case '9':
+                  return 'hit/surrender'
+                case '8':
+                case '7':
+                  return 'hit'
+                default:
+                  return 'stand'
+              }
+              break
+            case '15':
+              switch(this.dealer){
+                case '10':
+                  return 'hit/surrender'
+                case 'A':
+                case '9':
+                case '8':
+                case '7':
+                  return 'hit'
+                default:
+                  return 'stand'
+              }
+              break
+            case '14':
+            case '13':
+              switch(this.dealer){
+                case 'A':
+                case '10':
+                case '9':
+                case '8':
+                case '7':
+                  return 'hit'
+                default:
+                  return 'stand'
+              }
+              break
+            case '12':
+              switch(this.dealer){
+                case 'A':
+                case '10':
+                case '9':
+                case '8':
+                case '7':
+                case '3':
+                case '2':
+                  return 'hit'
+                default:
+                  return 'stand'
+              }
+              break
+            case '11':
+              switch(this.dealer){
+                case 'A':
+                  return 'hit'
+                default:
+                  return 'double'
+              }
+              break
+            case '10':
+              switch(this.dealer){
+                case 'A':
+                case '10':
+                  return 'hit'
+                default:
+                  return 'double'
+              }
+              break
+            case '9':
+              switch(this.dealer){
+                case 'A':
+                case '10':
+                case '9':
+                case '8':
+                case '7':
+                case '2':
+                  return 'hit'
+                default:
+                  return 'double'
+              }
+              break
+            case 'A9':
+            case 'A8':
+              switch(this.dealer){
+                case 'A':
+                case '10':
+                case '9':
+                case '8':
+                case '7':
+                  return 'stand'
+                default:
+                  return 'double'
+              }
+              break
+            case 'A7':
+              switch(this.dealer){
+                case 'A':
+                case '10':
+                case '9':
+                  return 'hit'
+                case '8':
+                case '7':
+                  return 'stand'
+                default:
+                  return 'double'
+              }
+              break
+            case 'A6':
+              switch(this.dealer){
+                case '6':
+                case '5':
+                case '4':
+                case '3':
+                  return 'double'
+                default:
+                  return 'hit'
+              }
+              break
+            case 'A5':
+            case 'A4':
+              switch(this.dealer){
+                case '6':
+                case '5':
+                case '4':
+                  return 'double'
+                default:
+                  return 'hit'
+              }
+              break
+            case 'A3':
+            case 'A2':
+              switch(this.dealer){
+                case '6':
+                case '5':
+                  return 'double'
+                default:
+                  return 'hit'
+              }
+              break
+          }
+          return 'pick something!'
+        },
+        generateHit(){
+          return [
+            "Hit it!",
+            "Get another card, bucko. Hit!",
+            "You should hit but don't blame me if you lose.",
+            "In my expert opinion, you should hit.",
+            "I asked my friend Mike, and he said you should hit.",
+            "I'd hit it...",
+            "Your best bet is to hit.",
+            "Hit lol",
+            "For sure you should hit.",
+            "The best fit is to hit.",
+            "Believe in the heart of the cards and hit!",
+            "Hit me baby one more time.",
+            "Yeah you're gonna need another card bud. Hit."
+          ]
+        },
+        generateStand(){
+          return [
+            "Okay chill buddy. Stand.",
+            "Stand by your cards.",
+            "Stand up for yourself.",
+            "Take a stand, man!",
+            "Anakin hates sand, and I think you should stand.",
+            "Are you a Stephen King novel? Because you should uh... The Stand...",
+            "The National Anthem is playing... Stand!",
+            "Your cards look fine to me. Stand.",
+            "The expert decision is to stand.",
+            "Stand, friend.",
+            "You should stand. You're welcome."
+          ]
+        },
+        generateSplit(){
+          return [
+            "Banana split",
+            "Peace, I'm gonna split. You should too.",
+            "You should split buddy.",
+            "It's a split decision.",
+            "Don't quite, you should split!"
+          ]
+        },
+        generateDouble(){
+          return [
+            "Double down, Charlie Brown!",
+            "Things are looking good. I'd double down.",
+            "I like your odds. Double down!",
+            "Don't frown, double down!",
+            "Don't be a clown, double down!"
+          ]
+        },
+        generateSurrender(){
+          "If it's option, you should surrender. If not, hit.",
+          "You can hit but your chances aren't great. Surrender if it's an option.",
+          "Never surrender! Except now. Now you should surrender. Or hit if that's not an option."
+        }
+      }
+    }).mount('#app')
+  </script>
+</html>
