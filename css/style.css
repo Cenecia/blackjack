@@ -1,9 +1,8 @@
 html {
-    height: 100%;
+
 }
 
 body {
-    height: 100%;
     background-color: black;
 }
 
@@ -23,4 +22,8 @@ body {
     .pickerBarRight {
         border-radius: 0 0 0.7em 0.7em;
     }
+}
+
+.centerText {
+    text-align: center;
 }
